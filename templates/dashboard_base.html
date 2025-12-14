@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="flex h-screen w-full overflow-hidden bg-gray-900">
+    <!-- Sidebar -->
+    <aside
+        class="w-64 bg-gray-800/50 backdrop-blur-xl border-r border-white/10 flex-shrink-0 flex flex-col transition-all duration-300 transform -translate-x-full md:translate-x-0 absolute md:relative z-30 h-full overflow-y-auto custom-scrollbar"
+        id="sidebar">
+        <div class="p-6">
+            <div class="flex items-center gap-3 mb-8">
+                <div
+                    class="h-10 w-10 bg-gradient-to-br from-brand-400 to-blue-600 rounded-lg flex items-center justify-center shadow-lg transform -rotate-6">
+                    <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                    </svg>
+                </div>
+                <h1 class="font-display font-bold text-xl text-white tracking-tight">Recruiter ATS</h1>
+            </div>
+
+            <nav class="space-y-2">
+                <a href="{% url 'dashboard' %}"
+                    class="flex items-center px-4 py-3 text-gray-300 hover:bg-white/5 hover:text-white rounded-lg transition-colors {% if request.resolver_match.url_name == 'dashboard' %}bg-white/10 text-brand-400{% endif %}">
+                    <svg class="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                    </svg>
+                    Overview
+                </a>
+                <a href="{% url 'job_list' %}"
+                    class="flex items-center px-4 py-3 text-gray-300 hover:bg-white/5 hover:text-white rounded-lg transition-colors {% if 'jobs' in request.path and 'candidate' not in request.path %}bg-white/10 text-brand-400{% endif %}">
+                    <svg class="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                    Jobs
+                </a>
+                <a href="{% url 'candidate_list' %}"
+                    class="flex items-center px-4 py-3 text-gray-300 hover:bg-white/5 hover:text-white rounded-lg transition-colors {% if 'candidate' in request.path and 'jobs' not in request.path %}bg-white/10 text-brand-400{% endif %}">
+                    <svg class="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    Candidates
+                </a>
+                <a href="{% url 'interview_list' %}"
+                    class="flex items-center px-4 py-3 text-gray-300 hover:bg-white/5 hover:text-white rounded-lg transition-colors {% if 'interviews' in request.path %}bg-white/10 text-brand-400{% endif %}">
+                    <svg class="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    Interviews
+                </a>
+            </nav>
+        </div>
+
+        <div class="mt-auto p-6 border-t border-white/10">
+            <div class="flex items-center gap-3">
+                <div
+                    class="h-10 w-10 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold">
+                    {{ request.user.username|make_list|first|upper }}
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-white truncate">{{ request.user.username }}</p>
+                    <p class="text-xs text-gray-400 truncate">{{ request.user.email }}</p>
+                </div>
+                <form method="post" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="text-gray-400 hover:text-red-400 transition-colors" title="Logout">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        </svg>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col min-w-0 overflow-hidden relative">
+        <!-- Mobile Header -->
+        <header
+            class="md:hidden bg-gray-800/50 backdrop-blur-md border-b border-white/10 p-4 flex items-center justify-between z-20">
+            <button onclick="document.getElementById('sidebar').classList.toggle('-translate-x-full')"
+                class="text-white">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+            </button>
+            <span class="font-display font-bold text-white">Recruiter ATS</span>
+            <div class="w-6"></div>
+        </header>
+
+        <div class="flex-1 overflow-auto p-4 md:p-8 relative">
+            <!-- Background Blobs (Inherited from base but constrained here if needed, or rely on base) -->
+            <!-- Actually base.html has fixed blobs. -->
+
+            {% block dashboard_content %}{% endblock %}
+        </div>
+    </main>
+</div>
+{% endblock %}

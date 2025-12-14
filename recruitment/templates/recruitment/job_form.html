@@ -1,0 +1,167 @@
+{% extends 'dashboard_base.html' %}
+
+{% block dashboard_content %}
+<div class="max-w-3xl mx-auto">
+    <div class="flex items-center mb-8 animate-fade-in-up">
+        <a href="{% url 'job_list' %}" class="mr-4 text-gray-400 hover:text-white transition-colors">
+            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+        </a>
+        <div>
+            <h2 class="text-3xl font-display font-bold text-white mb-2">{% if form.instance.pk %}Edit Job{% else
+                %}Create New Job{% endif %}</h2>
+            <p class="text-gray-400">Fill in the details below or use AI to generate content</p>
+        </div>
+    </div>
+
+    <form method="post" class="space-y-6 animate-fade-in-up" style="animation-delay: 0.1s;">
+        {% csrf_token %}
+
+        <div class="glass rounded-xl p-8 space-y-6">
+            <div class="space-y-2">
+                <label for="id_title" class="text-sm font-medium text-gray-300 ml-1">Job Title</label>
+                <div class="flex gap-2">
+                    <input type="text" name="title" id="id_title" value="{{ form.title.value|default:'' }}" required
+                        class="input-field" placeholder="e.g. Senior Software Engineer">
+                    <button type="button" onclick="document.getElementById('ai-modal').classList.remove('hidden')"
+                        class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors flex items-center whitespace-nowrap">
+                        <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                        Generate with AI
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-2">
+                    <label for="id_location" class="text-sm font-medium text-gray-300 ml-1">Location</label>
+                    <input type="text" name="location" id="id_location" value="{{ form.location.value|default:'' }}"
+                        required class="input-field" placeholder="e.g. Remote, New York, NY">
+                </div>
+
+                <div class="space-y-2">
+                    <label for="id_salary_range" class="text-sm font-medium text-gray-300 ml-1">Salary Range</label>
+                    <input type="text" name="salary_range" id="id_salary_range"
+                        value="{{ form.salary_range.value|default:'' }}" class="input-field"
+                        placeholder="e.g. $120k - $160k">
+                </div>
+            </div>
+
+            <div class="space-y-2">
+                <label for="id_description" class="text-sm font-medium text-gray-300 ml-1">Job Description</label>
+                <textarea name="description" id="id_description" rows="6" required
+                    class="input-field min-h-[150px] resize-y"
+                    placeholder="Describe the role...">{{ form.description.value|default:'' }}</textarea>
+            </div>
+
+            <div class="space-y-2">
+                <label for="id_requirements" class="text-sm font-medium text-gray-300 ml-1">Requirements</label>
+                <textarea name="requirements" id="id_requirements" rows="6" required
+                    class="input-field min-h-[150px] resize-y"
+                    placeholder="List the requirements...">{{ form.requirements.value|default:'' }}</textarea>
+            </div>
+        </div>
+
+        <div class="flex justify-end gap-4">
+            <a href="{% url 'job_list' %}"
+                class="px-6 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/10 transition-colors">
+                Cancel
+            </a>
+            <button type="submit" class="btn-primary w-auto px-8">
+                {% if form.instance.pk %}Update Job{% else %}Create Job{% endif %}
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- AI Generation Modal -->
+<div id="ai-modal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog"
+    aria-modal="true">
+    <!-- Backdrop -->
+    <div class="fixed inset-0 bg-gray-900/80 backdrop-blur-sm transition-opacity"></div>
+
+    <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+        <div
+            class="relative transform overflow-hidden rounded-2xl bg-gray-900 border border-white/10 text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-lg glass">
+            <div class="px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                <div class="sm:flex sm:items-start">
+                    <div
+                        class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-purple-500/20 sm:mx-0 sm:h-10 sm:w-10">
+                        <svg class="h-6 w-6 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                    </div>
+                    <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left w-full">
+                        <h3 class="text-xl font-semibold leading-6 text-white" id="modal-title">Generate Job Content
+                        </h3>
+                        <div class="mt-4 space-y-4">
+                            <p class="text-sm text-gray-300">
+                                Provide a brief description or key points about the role. AI will generate a detailed
+                                job description and requirements list for you.
+                            </p>
+                            <textarea id="ai-prompt" rows="4" class="input-field resize-none"
+                                placeholder="e.g. We need a Senior Python Developer with 5 years experience in Django. Needs to lead a team of 3 juniors. Remote work allowed."></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-black/20 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                <button type="button" id="modal-generate-btn" hx-post="{% url 'generate_job_description' %}"
+                    hx-include="#ai-prompt,#id_title" hx-target="#ai-response" hx-swap="none"
+                    onclick="document.getElementById('modal-loading').classList.remove('hidden'); document.getElementById('modal-generate-btn').disabled = true;"
+                    class="inline-flex w-full justify-center rounded-lg bg-purple-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-purple-500 sm:ml-3 sm:w-auto transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                    Generate
+                </button>
+                <button type="button" onclick="document.getElementById('ai-modal').classList.add('hidden')"
+                    class="mt-3 inline-flex w-full justify-center rounded-lg bg-white/5 px-3 py-2 text-sm font-semibold text-gray-300 shadow-sm ring-1 ring-inset ring-white/10 hover:bg-white/10 sm:mt-0 sm:w-auto transition-colors">
+                    Cancel
+                </button>
+                <div id="modal-loading" class="hidden mr-auto flex items-center text-purple-400 text-sm ml-4">
+                    <svg class="animate-spin h-4 w-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none"
+                        viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                        </circle>
+                        <path class="opacity-75" fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                        </path>
+                    </svg>
+                    Generating...
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Hidden div to handle HTMX JSON response -->
+<div id="ai-response" hidden></div>
+
+<script>
+    document.body.addEventListener('htmx:afterRequest', (event) => {
+        if (event.detail.target.id === 'ai-response') {
+            // Reset modal state
+            document.getElementById('modal-loading').classList.add('hidden');
+            document.getElementById('modal-generate-btn').disabled = false;
+            document.getElementById('ai-modal').classList.add('hidden');
+
+            try {
+                const response = JSON.parse(event.detail.xhr.responseText);
+                if (response.description) {
+                    document.getElementById('id_description').value = response.description;
+                }
+                if (response.requirements) {
+                    document.getElementById('id_requirements').value = response.requirements;
+                }
+            } catch (e) {
+                console.error('Error parsing AI response:', e);
+            }
+        }
+    });
+
+    // Add prompt name attribute dynamically for HTMX to pick it up or ensure it has name
+    document.getElementById('ai-prompt').setAttribute('name', 'prompt');
+</script>
+{% endblock %}

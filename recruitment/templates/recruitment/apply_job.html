@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-900 pt-32 pb-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+        <!-- Left Column: Job Details -->
+        <div class="animate-fade-in-up">
+            <div class="glass rounded-xl p-8 sticky top-32">
+                <div class="mb-6">
+                    <span class="text-brand-400 text-sm font-semibold tracking-wider uppercase mb-2 block">Applying
+                        for</span>
+                    <h1 class="text-3xl font-display font-bold text-white mb-4">{{ job.title }}</h1>
+
+                    <div class="flex flex-wrap gap-4 text-sm text-gray-400 mb-6">
+                        <span class="flex items-center">
+                            <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                            {{ job.location }}
+                        </span>
+                        {% if job.salary_range %}
+                        <span class="flex items-center text-green-400">
+                            <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            {{ job.salary_range }}
+                        </span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <div>
+                        <h3 class="text-white font-bold text-lg mb-3">About the Role</h3>
+                        <div class="text-gray-300 leading-relaxed whitespace-pre-wrap text-sm">{{ job.description }}
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-white font-bold text-lg mb-3">Requirements</h3>
+                        <div class="text-gray-300 leading-relaxed whitespace-pre-wrap text-sm">{{ job.requirements }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Application Form -->
+        <div class="animate-fade-in-up" style="animation-delay: 0.1s;">
+            <div class="glass rounded-xl p-8">
+                <h2 class="text-2xl font-bold text-white mb-6">Submit Your Application</h2>
+
+                <form method="post" enctype="multipart/form-data" class="space-y-6">
+                    {% csrf_token %}
+
+                    <div class="grid grid-cols-1 gap-6">
+                        <div class="space-y-2">
+                            <label class="text-sm font-medium text-gray-300 ml-1">Full Name</label>
+                            <input type="text" name="name" required class="input-field"
+                                value="{{ request.user.get_full_name|default:request.user.username }}">
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="text-sm font-medium text-gray-300 ml-1">Email Address</label>
+                            <input type="email" name="email" required class="input-field"
+                                value="{{ request.user.email }}">
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="space-y-2">
+                                <label class="text-sm font-medium text-gray-300 ml-1">Experience (Years)</label>
+                                <input type="number" name="experience_years" min="0" required class="input-field"
+                                    placeholder="e.g. 5">
+                            </div>
+
+                            <div class="space-y-2">
+                                <label class="text-sm font-medium text-gray-300 ml-1">Current Location</label>
+                                <input type="text" name="current_location" required class="input-field"
+                                    placeholder="City, Country">
+                            </div>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="text-sm font-medium text-gray-300 ml-1">Work Preference</label>
+                            <select name="work_preference" class="input-field bg-gray-800 text-white">
+                                <option value="REMOTE" class="bg-gray-800 text-white">Remote</option>
+                                <option value="ONSITE" class="bg-gray-800 text-white">On-site</option>
+                                <option value="HYBRID" class="bg-gray-800 text-white">Hybrid</option>
+                            </select>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="text-sm font-medium text-gray-300 ml-1">Resume (PDF)</label>
+                            <div
+                                class="relative border-2 border-dashed border-gray-700 bg-gray-800/50 rounded-xl p-8 text-center hover:border-brand-500 hover:bg-brand-500/5 transition-colors group cursor-pointer">
+                                <input type="file" name="resume" accept=".pdf,.doc,.docx" required
+                                    class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                                <div class="space-y-2 pointer-events-none">
+                                    <svg class="w-10 h-10 mx-auto text-gray-400 group-hover:text-brand-400 transition-colors"
+                                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                                    </svg>
+                                    <p class="text-gray-300 font-medium">Click to upload or drag & drop</p>
+                                    <p class="text-xs text-gray-500">PDF, DOC up to 5MB</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-4 pt-4 border-t border-white/10 mt-6">
+                        <a href="{% url 'candidate_job_list' %}"
+                            class="flex-1 bg-white/5 hover:bg-white/10 text-white text-center py-3 rounded-xl font-medium transition-colors">
+                            Cancel
+                        </a>
+                        <button type="submit" class="flex-1 btn-primary py-3">
+                            Submit Application
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

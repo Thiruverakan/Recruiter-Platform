@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-900 p-8 pt-32">
+    <div class="max-w-7xl mx-auto">
+        <div class="flex flex-col md:flex-row justify-between items-center mb-8 animate-fade-in-up gap-4">
+            <div>
+                <h1 class="text-3xl font-display font-bold text-white mb-2">Available Opportunities</h1>
+                <p class="text-gray-400">Find your dream job and apply today.</p>
+            </div>
+            <!-- Filters -->
+            <div class="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
+                <form method="get" class="flex flex-col md:flex-row gap-4 w-full" id="filter-form">
+                    <!-- Role Filter -->
+                    <div class="relative group">
+                        <select name="role" onchange="this.form.submit()"
+                            class="appearance-none bg-white/5 border border-white/10 rounded-lg px-4 py-2 pr-8 text-gray-300 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors cursor-pointer hover:bg-white/10">
+                            <option value="">All Roles</option>
+                            {% for role in job_roles %}
+                            {% if request.GET.role == role %}
+                            <option value="{{ role }}" selected>{{ role }}</option>
+                            {% else %}
+                            <option value="{{ role }}">{{ role }}</option>
+                            {% endif %}
+                            {% endfor %}
+                        </select>
+                        <div
+                            class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none text-gray-400">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- Sort Filter -->
+                    <div class="relative group">
+                        <select name="sort" onchange="this.form.submit()"
+                            class="appearance-none bg-white/5 border border-white/10 rounded-lg px-4 py-2 pr-8 text-gray-300 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors cursor-pointer hover:bg-white/10">
+                            <option value="latest" {% if request.GET.sort=='latest' %}selected{% endif %}>Latest Updates
+                            </option>
+                            <option value="oldest" {% if request.GET.sort=='oldest' %}selected{% endif %}>Oldest First
+                            </option>
+                        </select>
+                        <div
+                            class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none text-gray-400">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </div>
+                    </div>
+                </form>
+
+                <form method="post" action="{% url 'logout' %}" class="ml-auto md:ml-0">
+                    {% csrf_token %}
+                    <button type="submit"
+                        class="text-gray-400 hover:text-white transition-colors whitespace-nowrap bg-white/5 px-4 py-2 rounded-lg hover:bg-red-500/20 hover:text-red-400">Logout</button>
+                </form>
+            </div>
+        </div>
+
+        {% if messages %}
+        <div id="toast-container" class="fixed top-24 right-5 z-50 flex flex-col gap-2">
+            {% for message in messages %}
+            <div
+                class="glass px-6 py-4 rounded-xl flex items-center gap-3 animate-fade-in-up shadow-xl border-l-4 {% if message.tags == 'success' %}border-green-500{% elif message.tags == 'error' %}border-red-500{% else %}border-blue-500{% endif %}">
+                <span class="text-white font-medium">{{ message }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Inbox / Notifications -->
+        {% if notifications %}
+        <div class="mb-8 animate-fade-in-up">
+            <h2 class="text-2xl font-bold text-white mb-4">Inbox</h2>
+            <div class="grid gap-3">
+                {% for notif in notifications %}
+                <div class="glass p-4 rounded-xl flex items-start gap-3 border-l-4 border-blue-500">
+                    <div class="bg-blue-500/20 p-2 rounded-lg text-blue-400">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="text-gray-200 text-sm">{{ notif.message }}</p>
+                        <p class="text-xs text-gray-500 mt-1">{{ notif.created_at|timesince }} ago</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="grid gap-6 animate-fade-in-up" style="animation-delay: 0.1s;">
+            {% for job in jobs %}
+            <div class="glass rounded-xl p-6 transition-all hover:bg-white/[0.1] group">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <h2 class="text-xl font-bold text-white mb-2 group-hover:text-brand-400 transition-colors"
+                            style="display: block;">
+                            {{ job.title }}
+                        </h2>
+                        <div class="flex flex-wrap items-center gap-4 text-sm text-gray-400 mb-4">
+                            <span class="flex items-center">
+                                {{ job.location }}
+                            </span>
+                            <span class="flex items-center">
+                                Posted {{ job.created_at|timesince }} ago
+                            </span>
+                        </div>
+                        <p class="text-gray-300 line-clamp-2 max-w-3xl">{{ job.description }}</p>
+                    </div>
+                    <a href="{% url 'apply_job' job.id %}"
+                        class="btn-primary px-6 py-2.5 whitespace-nowrap text-center">
+                        Apply Now
+                    </a>
+                </div>
+            </div>
+            {% empty %}
+            <div class="text-center py-12 text-gray-400">
+                No jobs available at the moment.
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

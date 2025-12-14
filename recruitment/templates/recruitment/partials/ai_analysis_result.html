@@ -1,0 +1,29 @@
+{% if candidate.ai_analysis %}
+<div class="mb-4 animate-fade-in-up">
+    <div class="flex items-center justify-between mb-2">
+        <span class="text-gray-300">Match Score</span>
+        <span
+            class="text-2xl font-bold {% if candidate.match_score > 75 %}text-green-400{% elif candidate.match_score > 50 %}text-yellow-400{% else %}text-red-400{% endif %}">
+            {{ candidate.match_score }}%
+        </span>
+    </div>
+    <div class="w-full bg-gray-700 rounded-full h-2.5">
+        <div class="bg-gradient-to-r from-brand-500 to-purple-500 h-2.5 rounded-full"
+            style="width: {{ candidate.match_score }}%"></div>
+    </div>
+</div>
+<div class="prose prose-invert max-w-none text-sm text-gray-300 bg-white/5 p-4 rounded-lg animate-fade-in-up mb-4">
+    {{ candidate.ai_analysis|linebreaks }}
+</div>
+{% endif %}
+
+<div class="text-center animate-fade-in-up">
+    <button hx-post="{% url 'analyze_candidate' candidate.id %}" hx-target="#ai-analysis-section"
+        hx-indicator="#loading-indicator"
+        class="bg-gradient-to-r from-brand-500 to-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:from-brand-600 hover:to-blue-700 transition-all text-sm w-full">
+        Analyze CV
+    </button>
+    <div id="loading-indicator" class="htmx-indicator mt-4 text-brand-400">
+        Analyzing resume with AI...
+    </div>
+</div>
